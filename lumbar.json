@@ -75,5 +75,8 @@
     "test/src/thorax.js": [
       "templates/"
     ]
+  },
+  "test": {
+    "auto-include": "test/"
   }
 }
