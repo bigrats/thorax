@@ -60,5 +60,11 @@
   ],
   "scope": {
     "template": "src/fragments/scope.handlebars"
+  },
+  "templates": {
+    "root": "templates/",
+    "precompile": {
+      "data": true
+    }
   }
 }
