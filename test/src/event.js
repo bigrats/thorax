@@ -256,14 +256,14 @@ describe('event', function() {
     view._addChild(secondChild);
     expect(secondChildSpy.callCount).to.equal(1, 'adding a child to a view that is ready should immediately trigger');
 
-    var itemViewSpy = this.spy();    
+    var itemViewSpy = this.spy();
     var collectionView = new Thorax.View({
       itemView: Thorax.View.extend({
         events: {
           ready: itemViewSpy
         },
         tagName: 'li',
-        template: '{{key}}'
+        template: function(context) { return context.key; }
       }),
       collection: new Thorax.Collection([
         {key: 'one'},

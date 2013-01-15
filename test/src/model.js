@@ -78,7 +78,7 @@ describe('model', function() {
       test2: 0
     };
     var view = new Thorax.View({
-      template: '',
+      template: function() { return ''; },
       events: {
         model: {
           all: function() {

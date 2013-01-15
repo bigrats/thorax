@@ -59,7 +59,7 @@ describe('form', function() {
     var mockViewHelperFragment = '<div data-view-cid="mock" data-view-helper="mock"><input name="childKey"></div>';
     var view = new Thorax.View({
       child: new Thorax.View({
-        template: '<input name="childKey">'
+        template: function() { return '<input name="childKey">'; }
       }),
       template: '<input name="parentKey">{{view child}}' + mockViewHelperFragment
     });

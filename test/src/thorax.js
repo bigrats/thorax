@@ -4,7 +4,7 @@ describe('core', function() {
 
   Thorax.templates.parent = '<div>{{view child}}</div>';
   Thorax.templates.child = '<div>{{value}}</div>';
-  Thorax.templates['extension-test.handlebars'] = '123';
+  Thorax.templates['extension-test.handlebars'] = function() { return '123'; };
 
   it("registry", function() {
     var ViewClass = Thorax.View.extend({name: 'a-name'}, {});
@@ -257,7 +257,7 @@ describe('core', function() {
 
   it("template passed to constructor and view block", function() {
     var view = new Thorax.View({
-      template: '<p>{{key}}</p>',
+      template: function(context) { return '<p>' + context.key + '</p>'; },
       key: 'value'
     });
     view.render();
@@ -327,7 +327,7 @@ describe('core', function() {
           throw new Error('dom error');
         }
       },
-      template: '<div></div>'
+      template: function() { return '<div></div>'; }
     });
     view.render();
     document.body.appendChild(view.el);

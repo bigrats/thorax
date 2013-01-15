@@ -94,10 +94,10 @@ describe('view helper', function() {
       template: '{{#each views}}{{view this}}{{/each}}',
       views: [
         new Thorax.View({
-          template: "a"
+          template: function() { return 'a'; }
         }),
         new Thorax.View({
-          template: "b"
+          template: function() { return 'b'; }
         })
       ]
     });
@@ -139,7 +139,7 @@ describe('view helper', function() {
 
   it("$.fn.view", function() {
     var child = new Thorax.View({
-      template: '<div class="child"></div>'
+      template: function() { return '<div class="child"></div>'; }
     });
     child.render();
     expect(child.$('div.child').view()).to.equal(child);

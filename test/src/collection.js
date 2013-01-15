@@ -1,8 +1,10 @@
 describe('collection', function() {
   Thorax.templates.letter = '{{collection tag="ul"}}';
-  Thorax.templates['letter-item'] = '<li>{{letter}}</li>';
-  Thorax.templates['letter-empty'] = '<li>empty</li>';
-  Thorax.templates['letter-multiple-item'] = '<li>{{letter}}</li><li>{{letter}}</li>';
+  Thorax.templates['letter-item'] = function(context) { return '<li>' + context.letter + '</li>'; };
+  Thorax.templates['letter-empty'] = function() { return '<li>empty</li>'; };
+  Thorax.templates['letter-multiple-item'] = function(context) {
+    return '<li>' + context.letter + '</li><li>' + context.letter + '</li>';
+  };
 
   var LetterModel = Thorax.Model.extend({});
   var letterCollection = new (Thorax.Collection.extend({
@@ -656,7 +658,7 @@ describe('collection', function() {
     var collection = new Thorax.Collection();
     var view = new Thorax.View({
       collection: collection,
-      template: '',
+      template: function() { return ''; },
       events: {
         collection: {
           all: function() {
@@ -697,7 +699,7 @@ describe('collection', function() {
     var collection = new Thorax.Collection([{key: 'one'}, {key: 'two'}]);
     var view = new Thorax.View({
       template: "{{collection-element tag=\"ul\"}}",
-      itemTemplate: Handlebars.compile('<li>{{key}}</li>'),
+      itemTemplate: function(context) { return '<li>' + context.key + '</li>'; },
       events: {
         'rendered:item': spy
       }
@@ -739,7 +741,7 @@ describe('collection', function() {
         'rendered:collection': spy
       },
       template: '{{collection-element}}',
-      itemTemplate: Handlebars.compile('<span>{{text}}</span>')
+      itemTemplate: function(context) { return '<span>' + context.text + '</span>'; }
     });
     server.requests[0].respond(
       200,
