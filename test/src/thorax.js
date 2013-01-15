@@ -136,7 +136,7 @@ describe('core', function() {
     var a = document.createElement('li');
     a.innerHTML = 'one';
     var view = new Thorax.View({
-      template: '<ul>{{element a tag="li"}}{{element b tag="li"}}{{element c}}{{element d}}</ul>',
+      name: 'test/element-helper',
       a: a,
       b: function() {
         var li = document.createElement('li');
