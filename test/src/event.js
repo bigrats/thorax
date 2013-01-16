@@ -194,7 +194,7 @@ describe('event', function() {
           parentClickedCount = 0;
 
       var Child = Thorax.View.extend({
-        template: Thorax.templates.child,
+        template: Thorax.templates['test/child'],
         events: {
           'click div': function() {
             ++childClickedCount;
@@ -203,7 +203,7 @@ describe('event', function() {
       });
 
       var Parent = Thorax.View.extend({
-        template: Thorax.templates.parent,
+        name: 'test/parent',
         events: {
           'click div': function() {
             ++parentClickedCount;
@@ -270,7 +270,7 @@ describe('event', function() {
         {key: 'two'},
         {key: 'three'}
       ]),
-      template: '{{collection tag="ul"}}'
+      name: 'test/collection/simple'
     });
     expect(itemViewSpy.callCount).to.equal(0, 'ready event triggered via collection');
     collectionView.trigger('ready');

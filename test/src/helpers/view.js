@@ -44,7 +44,7 @@ describe('view helper', function() {
     var childRenderedCount = 0,
         parentRenderedCount = 0;
     Thorax.View.extend({
-      name: 'child',
+      name: 'test/child',
       initialize: function() {
         this.on('rendered', function() {
           ++childRenderedCount;
@@ -52,7 +52,7 @@ describe('view helper', function() {
       }
     });
     var Parent = Thorax.View.extend({
-      name: 'parent',
+      name: 'test/parent',
       initialize: function() {
         this.on('rendered', function() {
           ++parentRenderedCount;
@@ -60,24 +60,24 @@ describe('view helper', function() {
         this.childModel = new Thorax.Model({
           value: 'a'
         });
-        this.child = new Thorax.Views.child({
+        this.child = new Thorax.Views['test/child']({
           model: this.childModel
         });
       }
     });
     var parent = new Parent();
     parent.render();
-    expect(parent.$('[data-view-name="child"] > div').html()).to.equal('a', 'view embedded');
+    expect(parent.$('[data-view-name="test/child"] > div').html()).to.equal('a', 'view embedded');
     expect(parentRenderedCount).to.equal(1);
     expect(childRenderedCount).to.equal(1);
 
     parent.render();
-    expect(parent.$('[data-view-name="child"] > div').html()).to.equal('a', 'view embedded');
+    expect(parent.$('[data-view-name="test/child"] > div').html()).to.equal('a', 'view embedded');
     expect(parentRenderedCount).to.equal(2, 're-render of parent does not render child');
     expect(childRenderedCount).to.equal(1, 're-render of parent does not render child');
 
     parent.childModel.set({value: 'b'});
-    expect(parent.$('[data-view-name="child"] > div').html()).to.equal('b', 'view embedded');
+    expect(parent.$('[data-view-name="test/child"] > div').html()).to.equal('b', 'view embedded');
     expect(parentRenderedCount).to.equal(2, 're-render of child does not parent child');
     expect(childRenderedCount).to.equal(2, 're-render of child does not render parent');
 

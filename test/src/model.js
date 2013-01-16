@@ -18,39 +18,39 @@ describe('model', function() {
     expect(e.shouldFetch(options)).to.be['true'];
 
     var f = new (Thorax.Collection.extend({url: '/'}))();
-    expect(e.shouldFetch({fetch: false})).to.be['false'];
+    expect(f.shouldFetch({fetch: false})).to.be['false'];
   });
 
   it("model view binding", function() {
-    var modelA = new Thorax.Model({letter: 'a'});
-    var modelB = new Thorax.Model({letter: 'b'});
-    var modelC = new Thorax.Model({letter: 'c'});
+    var modelA = new Thorax.Model({a: 'a'}),
+        modelB = new Thorax.Model({a: 'b'}),
+        modelC = new Thorax.Model({a: 'c'});
 
     var a = new Thorax.View({
-      template: '<li>{{letter}}</li>',
+      name: 'test/properties',
       model: modelA
     });
-    expect(a.el.firstChild.innerHTML).to.equal('a', 'set via constructor');
+    expect(a.el.innerHTML).to.equal('a\n', 'set via constructor');
 
     var b = new Thorax.View({
-      template: '<li>{{letter}}</li>'
+      name: 'test/properties'
     });
     b.setModel(modelB);
-    expect(b.el.firstChild.innerHTML).to.equal('b', 'set via setModel');
+    expect(b.el.innerHTML).to.equal('b\n', 'set via setModel');
 
-    modelB.set({letter: 'B'});
-    expect(b.el.firstChild.innerHTML).to.equal('B', 'update attribute triggers render');
-    modelB.set({letter: 'b'});
+    modelB.set({a: 'B'});
+    expect(b.el.innerHTML).to.equal('B\n', 'update attribute triggers render');
+    modelB.set({a: 'b'});
 
     var c = new Thorax.View({
-      template: '<li>{{letter}}</li>'
+      name: 'test/properties'
     });
     c.setModel(modelC, {
       render: false
     });
     expect(c.el.firstChild).to.not.exist;
     c.render();
-    expect(c.el.firstChild.innerHTML).to.equal('c', 'manual render');
+    expect(c.el.innerHTML).to.equal('c\n', 'manual render');
   });
 
   it("isPopulated", function() {
@@ -60,14 +60,14 @@ describe('model', function() {
 
   it("$.fn.model", function() {
     var model = new Thorax.Model({
-      key: 'value'
+      a: 'value'
     });
     var view = new Thorax.View({
       model: model,
-      template: '{{key}}'
+      name: 'test/properties'
     });
     view.render();
-    expect(view.html()).to.equal('value');
+    expect(view.html()).to.equal('value\n');
     expect(view.$el.model()).to.equal(model);
   });
 

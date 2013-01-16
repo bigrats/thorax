@@ -7,8 +7,6 @@ before(function() {
     Backbone.history.start();
   }
 
-  Thorax.templates.parent = '<div>{{view child}}</div>';
-  Thorax.templates.child = '<div>{{value}}</div>';
   Thorax.templates['extension-test.handlebars'] = function() { return '123'; };
 });
 
@@ -43,22 +41,22 @@ describe('core', function() {
           return 'c';
         }
       },
-      template: '{{a}}{{b}}{{c}}'
+      name: 'test/properties'
     }))();
     view.render();
-    expect(view.html()).to.equal('abc');
+    expect(view.html()).to.equal('abc\n');
   });
 
   it("context can return undefined", function() {
     var view = new Thorax.View({
-      key: 'value',
+      a: 'value',
       context: function() {
         return;
       },
-      template: '{{key}}'
+      name: 'test/properties'
     });
     view.render();
-    expect(view.html()).to.equal('value');
+    expect(view.html()).to.equal('value\n');
   });
 
   it("context function is additive", function() {
@@ -69,10 +67,10 @@ describe('core', function() {
           b: 'b'
         };
       },
-      template: '{{a}}{{b}}'
+      name: 'test/properties'
     });
     view.render();
-    expect(view.html()).to.equal('ab');
+    expect(view.html()).to.equal('ab\n');
   });
 
   it("template helpers will not mutate view or model attributes", function() {
