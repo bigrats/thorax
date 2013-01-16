@@ -25,11 +25,11 @@ describe('super helper', function() {
     expect(child.$('.child').length).to.equal(1);
 
     parent = Thorax.View.extend({
-      template: '{{#collection letters tag="ul"}}<li>{{letter}}</li>{{/collection}}'
+      name: 'test/collection/block'
     });
     var instance = new (parent.extend({
       template: '{{super}}'
-    }))({letters: new Thorax.Collection([{letter: 'a'}])});
+    }))({collection: new Thorax.Collection([{letter: 'a'}])});
     instance.render();
     expect(instance.$('li').length).to.equal(1);
     expect(instance.$('li').eq(0).html()).to.equal('a');

@@ -1,5 +1,5 @@
 describe('collection', function() {
-  Thorax.templates.letter = '{{collection tag="ul"}}';
+  Thorax.templates['letter'] = Thorax.templates['test/collection/simple'];
   Thorax.templates['letter-item'] = function(context) { return '<li>' + context.letter + '</li>'; };
   Thorax.templates['letter-empty'] = function() { return '<li>empty</li>'; };
   Thorax.templates['letter-multiple-item'] = function(context) {
@@ -133,7 +133,7 @@ describe('collection', function() {
     runCollectionTests(viewReturningMultiple, 2, 'renderItem returning multiple');
 
     var viewWithBlockCollectionHelper = new Thorax.View({
-      template: '{{#collection tag="ul" empty-template="letter-empty"}}<li>{{letter}}</li>{{/collection}}'
+      name: 'test/collection/block'
     });
     runCollectionTests(viewWithBlockCollectionHelper, 1, 'block helper');
 
@@ -249,7 +249,7 @@ describe('collection', function() {
     var collection = new Thorax.Collection(letterCollection.models);
     var view = new Thorax.View({
       collection: collection,
-      template: '{{#collection tag="ul"}}<li>{{letter}}</li>{{/collection}}'
+      name: 'test/collection/block'
     });
     view.render();
     expect(view.$('li').length).to.equal(collection.length);
@@ -295,45 +295,45 @@ describe('collection', function() {
     }
 
     var view = new Thorax.View({
-      template: '{{#collection tag="ul"}}<li>{{key}}</li>{{/collection}}',
+      name: 'test/collection/block',
       collection: new Thorax.Collection(),
       itemFilter: function(model) {
-        return model.attributes.key === 'a' || model.attributes.key === 'b';
+        return model && (model.attributes.letter === 'a' || model.attributes.letter === 'b');
       }
     });
     view.render();
     document.body.appendChild(view.el);
-    expect(filterVisible(view.$('li')).length).to.equal(0);
-    var a = new Thorax.Model({key: 'a'});
+    expect(filterVisible(view.$('[data-model-cid]')).length).to.equal(0);
+    var a = new Thorax.Model({letter: 'a'});
     view.collection.reset([a]);
     expect(filterVisible(view.$('li')).length).to.equal(1);
     expect(filterVisible(view.$('li'))[0].innerHTML).to.equal('a');
-    var b = new Thorax.Model({key: 'b'});
+    var b = new Thorax.Model({letter: 'b'});
     view.collection.add(b);
     expect(filterVisible(view.$('li')).length).to.equal(2);
     expect(filterVisible(view.$('li'))[1].innerHTML).to.equal('b');
-    var c = new Thorax.Model({key: 'c'});
+    var c = new Thorax.Model({letter: 'c'});
     view.collection.add(c);
     expect(filterVisible(view.$('li')).length).to.equal(2, 'add item that should not be included');
     expect(filterVisible(view.$('li'))[1].innerHTML).to.equal('b', 'add item that should not be included');
-    c.set({key: 'b'});
+    c.set({letter: 'b'});
     expect(filterVisible(view.$('li')).length).to.equal(3, 'set item not included to be included');
     expect(filterVisible(view.$('li'))[1].innerHTML).to.equal('b', 'set item not included to be included');
     expect(filterVisible(view.$('li'))[2].innerHTML).to.equal('b', 'set item not included to be included');
-    c.set({key: 'c'});
+    c.set({letter: 'c'});
     expect(filterVisible(view.$('li')).length).to.equal(2, 'set item that is included to not be included');
     expect(filterVisible(view.$('li'))[1].innerHTML).to.equal('b', 'set item that is included to not be included');
-    a.set({key: 'x'});
+    a.set({letter: 'x'});
     expect(filterVisible(view.$('li')).length).to.equal(1, 'set first included item to not be included');
     expect(filterVisible(view.$('li'))[0].innerHTML).to.equal('b', 'set first included item to not be included');
-    a.set({key: 'a'});
+    a.set({letter: 'a'});
     expect(filterVisible(view.$('li')).length).to.equal(2);
     expect(filterVisible(view.$('li'))[0].innerHTML).to.equal('a', 'set first item not included to be included');
     expect(filterVisible(view.$('li'))[1].innerHTML).to.equal('b', 'set first item not included to be included');
-    a.set({key: 'a'});
+    a.set({letter: 'a'});
     expect(filterVisible(view.$('li'))[0].innerHTML).to.equal('a', 'items maintain order when updated when filter is present');
     expect(filterVisible(view.$('li'))[1].innerHTML).to.equal('b', 'items maintain order when updated when filter is present');
-    b.set({key: 'b'});
+    b.set({letter: 'b'});
     expect(filterVisible(view.$('li'))[0].innerHTML).to.equal('a', 'items maintain order when updated when filter is present');
     expect(filterVisible(view.$('li'))[1].innerHTML).to.equal('b', 'items maintain order when updated when filter is present');
     view.$el.remove();
@@ -432,7 +432,7 @@ describe('collection', function() {
         });
       },
       myCollection: collection,
-      template: '{{#collection myCollection tag="ul"}}<li>{{name}}</li>{{/collection}}'
+      name: 'test/collection/my-collection'
     });
     view.render();
     expect(renderCount).to.equal(1);
@@ -614,7 +614,7 @@ describe('collection', function() {
 
     //with default arg
     view = new Thorax.View({
-      template: "{{#collection tag=\"ul\"}}{{/collection}}",
+      template: Thorax.templates['test/collection/block'],
       collection: new (Thorax.Collection.extend({url: false}))()
     });
     view.render();
@@ -637,8 +637,8 @@ describe('collection', function() {
 
   it("$.fn.collection", function() {
     var view = new Thorax.View({
-      template: '{{#collection letters tag="ul"}}<li>{{letter}}</li>{{/collection}}',
-      letters: letterCollection
+      template: Thorax.templates['test/collection/my-collection'],
+      myCollection: letterCollection
     });
     view.render();
     expect(view.$('li:first-child').view().parent).to.equal(view);
@@ -734,7 +734,7 @@ describe('collection', function() {
     var server = sinon.fakeServer.create();
     var collection = new (Thorax.Collection.extend({
       url: '/test'
-    }));
+    }))();
     var view = new Thorax.View({
       collection: collection,
       events: {
