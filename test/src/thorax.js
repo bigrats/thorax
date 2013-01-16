@@ -138,42 +138,44 @@ describe('core', function() {
     expect(view.$('p > span').html()).to.equal('content');
   });
 
-  it("should allow local helpers to be declared", function() {
-    // register a global helper to ensure that it isn't overwritten
-    Handlebars.registerHelper('globalHelper', function() {
-      return '-';
-    });
+  if (Handlebars.compile) {
+    it("should allow local helpers to be declared", function() {
+      // register a global helper to ensure that it isn't overwritten
+      Handlebars.registerHelper('globalHelper', function() {
+        return '-';
+      });
 
-    var view = new Thorax.View({
-      helpers: {
-        test: function() {
-          return this.key;
+      var view = new Thorax.View({
+        helpers: {
+          test: function() {
+            return this.key;
+          },
+          testWithArg: function(arg) {
+            return this.key + arg;
+          },
+          testWithBlock: function(options) {
+            return options.fn(options.context);
+          }
         },
-        testWithArg: function(arg) {
-          return this.key + arg;
-        },
-        testWithBlock: function(options) {
-          return options.fn(options.context);
-        }
-      },
-      key: 'value',
-      template: '{{globalHelper}} {{test}} {{testWithArg "!"}} {{#testWithBlock}}{{key}}{{/testWithBlock}}'
-    });
-    view.render();
-    expect(view.html()).to.equal('- value value! value');
+        key: 'value',
+        template: '{{globalHelper}} {{test}} {{testWithArg "!"}} {{#testWithBlock}}{{key}}{{/testWithBlock}}'
+      });
+      view.render();
+      expect(view.html()).to.equal('- value value! value');
 
-    view = new Thorax.View({
-      collection: new Thorax.Collection([{letter: 'a'}]),
-      template: '{{#collection tag="ul"}}<li>{{globalHelper}} {{test letter}}</li>{{/collection}}',
-      helpers: {
-        test: function(letter) {
-          return letter + "!";
+      view = new Thorax.View({
+        collection: new Thorax.Collection([{letter: 'a'}]),
+        template: '{{#collection tag="ul"}}<li>{{globalHelper}} {{test letter}}</li>{{/collection}}',
+        helpers: {
+          test: function(letter) {
+            return letter + "!";
+          }
         }
-      }
+      });
+      view.render();
+      expect(view.$('li').html()).to.equal('- a!');
     });
-    view.render();
-    expect(view.$('li').html()).to.equal('- a!');
-  });
+  }
 
   it("template not found handling", function() {
     var view = new Thorax.View();
