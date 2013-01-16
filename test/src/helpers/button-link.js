@@ -7,46 +7,47 @@ describe('button-link helpers', function() {
   });
 
   it("multiple arguments to link", function() {
-    var view = new Thorax.View({
-      template: '{{#link a b c class="test"}}link{{/link}}',
-      a: 'a',
-      b: 'b',
-      c: 'c'
+    var html = Handlebars.helpers.link.call({}, 'a', 'b', 'c', {
+      hash: {'class': 'test'},
+      fn: function() { return 'link'; }
     });
-    view.render();
-    expect(view.$('a').attr('href')).to.equal('#a/b/c');
+
+    expect($(html.toString()).attr('href')).to.equal('#a/b/c');
   });
 
   it("expand-tokens in link", function() {
-    var view = new Thorax.View({
-      template: '{{#link "a/{{key}}"}}link{{/link}}',
-      key: 'b'
+    var html = Handlebars.helpers.link.call({key: 'b'}, 'a/{{key}}', {
+      hash: {'expand-tokens': false},
+      fn: function() { return 'link'; }
     });
-    view.render();
-    expect(view.$('a').attr('href')).to.equal('#a/{{key}}');
 
-    view = new Thorax.View({
-      template: '{{#link "a/{{key}}" expand-tokens=true}}link{{/link}}',
-      key: 'b'
+    expect($(html.toString()).attr('href')).to.equal('#a/{{key}}');
+
+    html = Handlebars.helpers.link.call({key: 'b'}, 'a/{{key}}', {
+      hash: {'expand-tokens': true},
+      fn: function() { return 'link'; }
     });
-    view.render();
-    expect(view.$('a').attr('href')).to.equal('#a/b');
-    expect(view.$('a[expand-tokens]').length).to.equal(0);
+
+    var el = $(html.toString());
+    expect(el.attr('href')).to.equal('#a/b');
+    expect(el.attr('expand-tokens')).to.not.exist;
   });
 
   it("button and link helpers", function() {
-    var view = new Thorax.View({
-      events: {
-        testEvent: function() {}
-      },
-      someMethod: function() {},
-      template: '{{#button "someMethod"}}Button{{/button}}{{#button trigger="testEvent"}}Button 2{{/button}}{{#link "href"}}content{{/link}}'
-    });
-    view.render();
-    expect($(view.$('button')[0]).html()).to.equal('Button');
-    expect($(view.$('button')[0]).attr('data-call-method')).to.equal('someMethod');
-    expect($(view.$('button')[1]).attr('data-trigger-event')).to.equal('testEvent');
-    expect(view.$('a').html()).to.equal('content');
-    expect(view.$('a').attr('href')).to.equal('#href');
+    var html, el;
+
+    html = Handlebars.helpers.button.call({}, 'someMethod', {hash: {}, fn: function() { return 'Button'; }});
+    el = $(html.toString());
+    expect(el.html()).to.equal('Button');
+    expect(el.attr('data-call-method')).to.equal('someMethod');
+
+    html = Handlebars.helpers.button.call({}, {hash: {trigger: 'testEvent'}, fn: function() { return 'Button 2'; }});
+    el = $(html.toString());
+    expect(el.attr('data-trigger-event')).to.equal('testEvent');
+
+    html = Handlebars.helpers.link.call({}, 'href', {hash: {}, fn: function() { return 'content'; }});
+    el = $(html.toString());
+    expect(el.html()).to.equal('content');
+    expect(el.attr('href')).to.equal('#href');
   });
 });
