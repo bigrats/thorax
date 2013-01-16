@@ -14,17 +14,6 @@ describe('super helper', function() {
     expect(child.$('.child').length).to.equal(1);
 
     parent = Thorax.View.extend({
-      name: 'super-test',
-      template: '<div class="parent"></div>'
-    });
-    child = new (parent.extend({
-      template: '<div class="child"></div>{{super}}'
-    }))();
-    child.render();
-    expect(child.$('.parent').length).to.equal(1);
-    expect(child.$('.child').length).to.equal(1);
-
-    parent = Thorax.View.extend({
       name: 'test/collection/block'
     });
     var instance = new (parent.extend({
@@ -34,4 +23,19 @@ describe('super helper', function() {
     expect(instance.$('li').length).to.equal(1);
     expect(instance.$('li').eq(0).html()).to.equal('a');
   });
+
+  if (Handlebars.compile) {
+    it('should work in compiled template references', function() {
+      var parent = Thorax.View.extend({
+        name: 'super-test',
+        template: '<div class="parent"></div>'
+      });
+      var child = new (parent.extend({
+        template: '<div class="child"></div>{{super}}'
+      }))();
+      child.render();
+      expect(child.$('.parent').length).to.equal(1);
+      expect(child.$('.child').length).to.equal(1);
+    });
+  }
 });
