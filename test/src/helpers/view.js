@@ -19,11 +19,16 @@ describe('view helper', function() {
     };
 
     var view = new Thorax.View({
-      template: '<p>{{view "Outer.Inner" tag="span"}}</p><div>{{view "Outer.More.Nested" tag="span"}}</div>'
+      template: function(context, options) {
+        function viewHelper(name) {
+          return options.helpers.view.call({}, name, {hash: {}, data: options.data});
+        }
+        return viewHelper('Outer.Inner') + viewHelper('Outer.More.Nested');
+      }
     });
     view.render();
-    expect(view.$('p > span').html()).to.equal('inner', 'test nested registryGet');
-    expect(view.$('div > span').html()).to.equal('nested', 'test nested registryGet');
+    expect(view.$('div').get(0).innerHTML).to.equal('inner', 'test nested registryGet');
+    expect(view.$('div').get(1).innerHTML).to.equal('nested', 'test nested registryGet');
 
     view = new Thorax.View({
       name: 'extension-test'
@@ -33,11 +38,7 @@ describe('view helper', function() {
   });
 
   it("fail silently when no view initialized", function() {
-    var parent = new Thorax.View({
-      template: "{{view child}}"
-    });
-    parent.render();
-    expect(parent.$el.html()).to.equal('');
+    expect(Handlebars.helpers.view.call({}, undefined, {data: {}})).to.equal('');
   });
 
   it("child views", function() {
@@ -91,7 +92,7 @@ describe('view helper', function() {
 
   it("child views within #each", function() {
     var parent = new Thorax.View({
-      template: '{{#each views}}{{view this}}{{/each}}',
+      name: 'test/view-helper-loop',
       views: [
         new Thorax.View({
           template: function() { return 'a'; }
@@ -144,7 +145,11 @@ describe('view helper', function() {
     child.render();
     expect(child.$('div.child').view()).to.equal(child);
     var parent = new Thorax.View({
-      template: '<div class="parent">{{view child}}</div>',
+      template: function(context, options) {
+        return '<div class="parent">'
+            + options.helpers.view(context.child, {hash:{}, data: options.data})
+          + '</div>';
+      },
       child: child
     });
     parent.render();
