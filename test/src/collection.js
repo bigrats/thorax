@@ -1,20 +1,28 @@
 describe('collection', function() {
-  Thorax.templates['letter'] = Thorax.templates['test/collection/simple'];
-  Thorax.templates['letter-item'] = function(context) { return '<li>' + context.letter + '</li>'; };
-  Thorax.templates['letter-empty'] = function() { return '<li>empty</li>'; };
-  Thorax.templates['letter-multiple-item'] = function(context) {
-    return '<li>' + context.letter + '</li><li>' + context.letter + '</li>';
-  };
+  var LetterModel, LetterCollectionView, LetterItemView,
 
-  var LetterModel = Thorax.Model.extend({});
-  var letterCollection = new (Thorax.Collection.extend({
-    model: LetterModel
-  }))(['a', 'b', 'c', 'd'].map(function(letter) {
-    return {letter: letter};
-  }));
-  var LetterCollectionView = Thorax.View.extend({name: 'letter'});
-  var LetterItemView = Thorax.View.extend({name: 'letter-item'});
-  Thorax.View.extend({name: 'letter-empty'});
+      letterCollection;
+
+  before(function() {
+    Thorax.templates['letter'] = Thorax.templates['test/collection/simple'];
+    Thorax.templates['letter-item'] = function(context) { return '<li>' + context.letter + '</li>'; };
+    Thorax.templates['letter-empty'] = function() { return '<li>empty</li>'; };
+    Thorax.templates['letter-multiple-item'] = function(context) {
+      return '<li>' + context.letter + '</li><li>' + context.letter + '</li>';
+    };
+
+    LetterModel = Thorax.Model.extend({});
+    LetterCollectionView = Thorax.View.extend({name: 'letter'});
+    LetterItemView = Thorax.View.extend({name: 'letter-item'});
+    Thorax.View.extend({name: 'letter-empty'});
+  });
+  beforeEach(function() {
+    letterCollection = new (Thorax.Collection.extend({
+      model: LetterModel
+    }))(['a', 'b', 'c', 'd'].map(function(letter) {
+      return {letter: letter};
+    }));
+  });
 
   it("should implement isPopulated", function() {
     expect(letterCollection.isPopulated()).to.be['true'];

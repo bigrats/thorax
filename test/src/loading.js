@@ -1,13 +1,18 @@
 describe('loading', function() {
   var loadStart = 'load:start',
       loadEnd = 'load:end',
-      loadStartTimeout = (Thorax.View.prototype._loadingTimeoutDuration * 1000) + 1,
-      loadEndTimeout = (Thorax.View.prototype._loadingTimeoutEndDuration * 1000) + 1,
+      loadStartTimeout,
+      loadEndTimeout,
       Application = _.extend({}, Backbone.Events),
       exports = Application;
   window.exports = exports;
 
-  Thorax.setRootObject(Application);
+  before(function() {
+    loadStartTimeout = (Thorax.View.prototype._loadingTimeoutDuration * 1000) + 1;
+    loadEndTimeout = (Thorax.View.prototype._loadingTimeoutEndDuration * 1000) + 1;
+
+    Thorax.setRootObject(Application);
+  });
 
   describe('load events', function() {
     it('views should see load start from model', function() {

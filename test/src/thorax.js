@@ -1,11 +1,18 @@
-describe('core', function() {
-  Backbone.history || (Backbone.history = new Backbone.History());
-  Backbone.history.start();
+// Assume that all files will include this
+before(function() {
+  if (!Backbone.history) {
+    Backbone.history = new Backbone.History();
+  }
+  if (!Backbone.History.started) {
+    Backbone.history.start();
+  }
 
   Thorax.templates.parent = '<div>{{view child}}</div>';
   Thorax.templates.child = '<div>{{value}}</div>';
   Thorax.templates['extension-test.handlebars'] = function() { return '123'; };
+});
 
+describe('core', function() {
   it("registry", function() {
     var ViewClass = Thorax.View.extend({name: 'a-name'}, {});
     expect(ViewClass.prototype.name).to.equal('a-name', 'sets a name attribute on view class');

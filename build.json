@@ -45,9 +45,6 @@
         "test",
         "loaded-test-runner"
       ],
-      "scripts": [
-        "test/src/"
-      ],
       "static": [
         {"src": "test/jquery.html", "dest": "jquery/test.html"},
         {"src": "test/zepto.html", "dest": "zepto/test.html"}
